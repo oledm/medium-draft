@@ -120,6 +120,20 @@ function getLoaders(env) {
     loader: 'file-loader'
   });
 
+  loaders.push({
+    test: /\.js$/,
+    enforce: 'pre',
+    use: [
+      {
+        loader: 'eslint-loader',
+        query: {
+          fix: true,
+        }
+      }
+    ],
+    exclude: /node_modules/,
+  })
+
   loaders.push({ test: /\.json$/, loader: 'json-loader' });
 
   if (env === ENV_PROD ) {

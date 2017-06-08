@@ -102,17 +102,22 @@ export default class Toolbar extends React.Component {
       toolbarNode.style.left = `${widthDiff / 2}px`;
     } else {
       const left = (selectionBoundary.left - parentBoundary.left);
-      toolbarNode.style.left = `${left + (widthDiff / 2)}px`;
-      // toolbarNode.style.width = toolbarBoundary.width + 'px';
-      // if (left + toolbarBoundary.width > parentBoundary.width) {
-        // toolbarNode.style.right = '0px';
-        // toolbarNode.style.left = '';
-        // toolbarNode.style.width = toolbarBoundary.width + 'px';
-      // }
-      // else {
-      //   toolbarNode.style.left = (left + widthDiff / 2) + 'px';
-      //   toolbarNode.style.right = '';
-      // }
+      const leftBorderPos = left + (widthDiff / 2);
+      if (leftBorderPos >= 0) {
+        toolbarNode.style.left = `${leftBorderPos}px`;
+
+        if (left + (toolbarBoundary.width / 2) > parentBoundary.width) {
+          toolbarNode.style.right = '0px';
+          toolbarNode.style.left = '';
+          toolbarNode.style.width = `${toolbarBoundary.width}px`;
+        } else {
+          toolbarNode.style.left = `${leftBorderPos}px`;
+          toolbarNode.style.right = '';
+        }
+      } else {
+        toolbarNode.style.left = '0px';
+        return;
+      }
     }
   }
 
