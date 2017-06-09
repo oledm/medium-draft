@@ -7,12 +7,13 @@ import {
   SelectionState,
   ContentBlock,
   genKey,
+  Modifier,
 } from 'draft-js';
 import isSoftNewlineEvent from 'draft-js/lib/isSoftNewlineEvent';
 import { OrderedMap } from 'immutable';
 
 import AddButton from './components/addbutton';
-import Toolbar, { BLOCK_BUTTONS, INLINE_BUTTONS } from './components/toolbar';
+import Toolbar, { BLOCK_BUTTONS, INLINE_BUTTONS, ALIGN_BUTTONS } from './components/toolbar';
 import LinkEditComponent from './components/LinkEditComponent';
 
 import rendererFn from './components/customrenderer';
@@ -73,6 +74,11 @@ class MediumDraftEditor extends React.Component {
       icon: PropTypes.string,
       description: PropTypes.string,
     })),
+    alignButtons: PropTypes.arrayOf(PropTypes.shape({
+      icon: PropTypes.string.isRequired,
+      style: PropTypes.string.isRequired,
+      description: PropTypes.string,
+    })),
     placeholder: PropTypes.string,
     continuousBlocks: PropTypes.arrayOf(PropTypes.string),
     sideButtons: PropTypes.arrayOf(PropTypes.shape({
@@ -99,6 +105,7 @@ class MediumDraftEditor extends React.Component {
     blockRenderMap: RenderMap,
     blockButtons: BLOCK_BUTTONS,
     inlineButtons: INLINE_BUTTONS,
+    alignButtons: ALIGN_BUTTONS,
     placeholder: 'Write your story...',
     continuousBlocks: [
       Block.UNSTYLED,
@@ -134,6 +141,7 @@ class MediumDraftEditor extends React.Component {
     this.handleReturn = this.handleReturn.bind(this);
     this.toggleBlockType = this._toggleBlockType.bind(this);
     this.toggleInlineStyle = this._toggleInlineStyle.bind(this);
+    this.toggleTextAlignment = this._toggleTextAlignment.bind(this);
     this.setLink = this.setLink.bind(this);
     this.blockRendererFn = this.props.rendererFn(this.onChange, this.getEditorState);
   }
@@ -399,6 +407,17 @@ class MediumDraftEditor extends React.Component {
     );
   }
 
+  _toggleTextAlignment(alignment) {
+    const { editorState } = this.props;
+    const blockData = Modifier.setBlockData(
+      editorState.getCurrentContent(),
+      editorState.getSelection(),
+      { 'text-align': alignment }
+    );
+    const newContentState = EditorState.push(editorState, blockData, 'change-block-data');
+    this.onChange(newContentState);
+  }
+
   removeLink = (blockKey, entityKey) => {
     const { editorState } = this.props;
     const content = editorState.getCurrentContent();
@@ -495,11 +514,13 @@ class MediumDraftEditor extends React.Component {
               editorState={editorState}
               toggleBlockType={this.toggleBlockType}
               toggleInlineStyle={this.toggleInlineStyle}
+              toggleTextAlignment={this.toggleTextAlignment}
               editorEnabled={editorEnabled}
               setLink={this.setLink}
               focus={this.focus}
               blockButtons={this.props.blockButtons}
               inlineButtons={this.props.inlineButtons}
+              alignButtons={this.props.alignButtons}
             />
           )}
           {isCursorLink && (

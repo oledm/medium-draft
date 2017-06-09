@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 
 import BlockToolbar from './blocktoolbar';
 import InlineToolbar from './inlinetoolbar';
+import AlignmentToolbar from './alignmenttoolbar';
 
 import { getSelection, getSelectionRect } from '../util/index';
 import { getCurrentBlock } from '../model/index';
@@ -18,8 +19,10 @@ export default class Toolbar extends React.Component {
     editorState: PropTypes.object,
     toggleBlockType: PropTypes.func,
     toggleInlineStyle: PropTypes.func,
+    toggleTextAlignment: PropTypes.func,
     inlineButtons: PropTypes.arrayOf(PropTypes.object),
     blockButtons: PropTypes.arrayOf(PropTypes.object),
+    alignButtons: PropTypes.arrayOf(PropTypes.object),
     editorNode: PropTypes.object,
     setLink: PropTypes.func,
     focus: PropTypes.func,
@@ -28,6 +31,7 @@ export default class Toolbar extends React.Component {
   static defaultProps = {
     blockButtons: BLOCK_BUTTONS,
     inlineButtons: INLINE_BUTTONS,
+    alignButtons: ALIGN_BUTTONS,
   };
 
   constructor(props) {
@@ -265,6 +269,13 @@ export default class Toolbar extends React.Component {
             buttons={this.props.inlineButtons}
           />
         ) : null}
+        {this.props.alignButtons.length > 0 ? (
+          <AlignmentToolbar
+            editorState={editorState}
+            onToggle={this.props.toggleTextAlignment}
+            buttons={this.props.alignButtons}
+          />
+        ) : null}
         {hasHyperLink && (
           <div className="md-RichEditor-controls">
             <span
@@ -376,3 +387,29 @@ export const INLINE_BUTTONS = [
   },
 ];
 
+export const ALIGN_BUTTONS = [
+  {
+    icon: 'align-left',
+    style: 'left',
+    description: 'Align left',
+
+  },
+  {
+    icon: 'align-center',
+    style: 'center',
+    description: 'Center horizontally',
+
+  },
+  {
+    icon: 'align-right',
+    style: 'right',
+    description: 'Align right',
+
+  },
+  {
+    icon: 'align-justify',
+    style: 'justify',
+    description: 'Justified',
+
+  },
+];
